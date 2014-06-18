@@ -3,8 +3,9 @@ package egorand.rxjavaandroiddemo.db;
 import java.util.List;
 import java.util.concurrent.Callable;
 
-import de.greenrobot.event.EventBus;
 import egorand.rxjavaandroiddemo.model.Beer;
+import rx.Observable;
+import rx.Subscriber;
 
 public class BeerCache {
 
@@ -14,9 +15,14 @@ public class BeerCache {
         this.databaseHelper = databaseHelper;
     }
 
-    public void cacheBeer(List<Beer> beers) {
-        databaseHelper.getBeersDao().callBatchTasks(new BatchBeerCachingTask(beers));
-        EventBus.getDefault().post(beers);
+    public Observable<List<Beer>> cacheBeer(final List<Beer> beers) {
+        return Observable.create(new Observable.OnSubscribe<List<Beer>>() {
+            @Override public void call(Subscriber<? super List<Beer>> subscriber) {
+                databaseHelper.getBeersDao().callBatchTasks(new BatchBeerCachingTask(beers));
+                subscriber.onNext(beers);
+                subscriber.onCompleted();
+            }
+        });
     }
 
     private class BatchBeerCachingTask implements Callable<Void> {
