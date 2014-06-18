@@ -21,4 +21,11 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
+
+    compile 'com.squareup.retrofit:retrofit:+'
+    compile 'com.jakewharton:butterknife:+'
+    compile 'com.squareup.picasso:picasso:+'
+    compile 'com.j256.ormlite:ormlite-core:+'
+    compile 'com.j256.ormlite:ormlite-android:+'
+    compile 'de.greenrobot:eventbus:+'
 }

@@ -1,36 +1,92 @@
 package egorand.rxjavaandroiddemo;
 
-import android.app.Activity;
+import android.app.ListActivity;
+import android.app.LoaderManager;
+import android.content.Loader;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
 
+import com.j256.ormlite.android.apptools.OpenHelperManager;
 
-public class MainActivity extends Activity {
+import java.util.List;
+
+import de.greenrobot.event.EventBus;
+import egorand.rxjavaandroiddemo.db.BeerCache;
+import egorand.rxjavaandroiddemo.db.BeersDatabaseHelper;
+import egorand.rxjavaandroiddemo.db.BeersLoader;
+import egorand.rxjavaandroiddemo.model.Beer;
+import egorand.rxjavaandroiddemo.model.BeerContainer;
+import egorand.rxjavaandroiddemo.rest.BeersRestClient;
+import egorand.rxjavaandroiddemo.ui.BeersAdapter;
+import retrofit.Callback;
+import retrofit.RestAdapter;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
+
+public class MainActivity extends ListActivity implements LoaderManager.LoaderCallbacks<List<Beer>> {
+
+    private BeersRestClient restClient;
+    private BeersDatabaseHelper databaseHelper;
+    private BeerCache beerCache;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        EventBus.getDefault().register(this);
+
+        setupRestClient();
+        databaseHelper = OpenHelperManager.getHelper(this, BeersDatabaseHelper.class);
+        beerCache = new BeerCache(databaseHelper);
+
+        setProgressBarVisibility(true);
+        restClient.getBeers("5", new Callback<BeerContainer>() {
+            @Override public void success(BeerContainer beerContainer, Response response) {
+                beerCache.cacheBeer(beerContainer.getBeer());
+            }
+
+            @Override public void failure(RetrofitError error) {
+                getLoaderManager().initLoader(0, null, MainActivity.this);
+            }
+        });
     }
 
+    private void setupRestClient() {
+        RestAdapter restAdapter = new RestAdapter.Builder()
+                .setEndpoint("http://api.brewerydb.com/v2")
+                .build();
+        restClient = restAdapter.create(BeersRestClient.class);
+    }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
+    private void initAdapter(List<Beer> beers) {
+        BeersAdapter adapter = new BeersAdapter(this, beers);
+        setListAdapter(adapter);
+        setProgressBarVisibility(false);
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
+    protected void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
+        OpenHelperManager.releaseHelper();
+    }
+
+    @Override
+    public Loader<List<Beer>> onCreateLoader(int id, Bundle args) {
+        return new BeersLoader(this, databaseHelper);
+    }
+
+    @Override
+    public void onLoadFinished(Loader<List<Beer>> loader, List<Beer> data) {
+        initAdapter(data);
+    }
+
+    @Override
+    public void onLoaderReset(Loader<List<Beer>> loader) {
+        setListAdapter(null);
+    }
+
+    public void onEventMainThread(List<Beer> cachedBeers) {
+        initAdapter(cachedBeers);
     }
 }
