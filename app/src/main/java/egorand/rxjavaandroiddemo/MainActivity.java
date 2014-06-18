@@ -3,6 +3,7 @@ package egorand.rxjavaandroiddemo;
 import android.app.ListActivity;
 import android.app.LoaderManager;
 import android.content.Loader;
+import android.os.AsyncTask;
 import android.os.Bundle;
 
 import com.j256.ormlite.android.apptools.OpenHelperManager;
@@ -20,6 +21,7 @@ import egorand.rxjavaandroiddemo.ui.BeersAdapter;
 import retrofit.Callback;
 import retrofit.RestAdapter;
 import retrofit.RetrofitError;
+import retrofit.android.MainThreadExecutor;
 import retrofit.client.Response;
 
 public class MainActivity extends ListActivity implements LoaderManager.LoaderCallbacks<List<Beer>> {
@@ -54,6 +56,7 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
     private void setupRestClient() {
         RestAdapter restAdapter = new RestAdapter.Builder()
                 .setEndpoint("http://api.brewerydb.com/v2")
+                .setExecutors(AsyncTask.THREAD_POOL_EXECUTOR, new MainThreadExecutor())
                 .build();
         restClient = restAdapter.create(BeersRestClient.class);
     }
