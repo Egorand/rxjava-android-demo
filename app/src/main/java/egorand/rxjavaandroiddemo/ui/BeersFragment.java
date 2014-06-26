@@ -1,22 +1,16 @@
 package egorand.rxjavaandroiddemo.ui;
 
-import android.app.LoaderManager;
-import android.content.Loader;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
 import com.devspark.progressfragment.ProgressListFragment;
-import com.j256.ormlite.dao.RuntimeExceptionDao;
 
 import java.util.List;
 
 import javax.inject.Inject;
 
-import dagger.Lazy;
 import egorand.rxjavaandroiddemo.MainActivity;
-import egorand.rxjavaandroiddemo.db.BeerCache;
 import egorand.rxjavaandroiddemo.db.BeersDao;
-import egorand.rxjavaandroiddemo.db.BeersLoader;
 import egorand.rxjavaandroiddemo.model.Beer;
 import egorand.rxjavaandroiddemo.model.BeerContainer;
 import egorand.rxjavaandroiddemo.rest.BeersRestClient;
@@ -28,11 +22,10 @@ import rx.functions.Action1;
 import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
-public class BeersFragment extends ProgressListFragment implements LoaderManager.LoaderCallbacks<List<Beer>> {
+public class BeersFragment extends ProgressListFragment {
 
     @Inject BeersRestClient restClient;
-    @Inject BeerCache beerCache;
-    @Inject @BeersDao Lazy<RuntimeExceptionDao<Beer, String>> beersDao;
+    @Inject BeersDao beersDao;
 
     private Subscription subscription;
 
@@ -60,7 +53,7 @@ public class BeersFragment extends ProgressListFragment implements LoaderManager
         return restClient.getBeers("5")
                 .onErrorReturn(new Func1<Throwable, BeerContainer>() {
                     @Override public BeerContainer call(Throwable throwable) {
-                        return new BeerContainer(beersDao.get().queryForAll());
+                        return new BeerContainer(beersDao.getCachedBeer());
                     }
                 })
                 .flatMap(new Func1<BeerContainer, Observable<Beer>>() {
@@ -76,7 +69,7 @@ public class BeersFragment extends ProgressListFragment implements LoaderManager
                 .toList()
                 .map(new Func1<List<Beer>, List<Beer>>() {
                     @Override public List<Beer> call(List<Beer> beers) {
-                        beerCache.cacheBeer(beers);
+                        beersDao.cacheBeer(beers);
                         return beers;
                     }
                 });
@@ -93,20 +86,4 @@ public class BeersFragment extends ProgressListFragment implements LoaderManager
         super.onDestroy();
         subscription.unsubscribe();
     }
-
-    @Override
-    public Loader<List<Beer>> onCreateLoader(int id, Bundle args) {
-        return ((MainActivity) getActivity()).getObjectGraph().get(BeersLoader.class);
-    }
-
-    @Override
-    public void onLoadFinished(Loader<List<Beer>> loader, List<Beer> data) {
-        displayData(data);
-    }
-
-    @Override
-    public void onLoaderReset(Loader<List<Beer>> loader) {
-        setListAdapter(null);
-    }
-
 }

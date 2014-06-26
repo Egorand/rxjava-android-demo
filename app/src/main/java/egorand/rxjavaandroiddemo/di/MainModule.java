@@ -1,6 +1,5 @@
 package egorand.rxjavaandroiddemo.di;
 
-import android.content.Context;
 import android.os.AsyncTask;
 import android.view.LayoutInflater;
 
@@ -15,9 +14,7 @@ import javax.inject.Singleton;
 import dagger.Module;
 import dagger.Provides;
 import egorand.rxjavaandroiddemo.MainActivity;
-import egorand.rxjavaandroiddemo.db.BeersDao;
 import egorand.rxjavaandroiddemo.db.BeersDatabaseHelper;
-import egorand.rxjavaandroiddemo.db.BeersLoader;
 import egorand.rxjavaandroiddemo.model.Beer;
 import egorand.rxjavaandroiddemo.rest.BeersRestClient;
 import egorand.rxjavaandroiddemo.ui.BeersAdapter;
@@ -28,8 +25,7 @@ import retrofit.android.MainThreadExecutor;
 @Module(
         injects = {
                 BeersFragment.class,
-                BeersAdapter.class,
-                BeersLoader.class
+                BeersAdapter.class
         }
 )
 public class MainModule {
@@ -38,11 +34,6 @@ public class MainModule {
 
     public MainModule(MainActivity activity) {
         this.activity = activity;
-    }
-
-    @Provides
-    public Context provideContext() {
-        return activity;
     }
 
     @Provides
@@ -69,7 +60,7 @@ public class MainModule {
         return OpenHelperManager.getHelper(activity, BeersDatabaseHelper.class);
     }
 
-    @Provides @BeersDao @Singleton
+    @Provides @Singleton
     public RuntimeExceptionDao<Beer, String> provideBeersDao(BeersDatabaseHelper databaseHelper) {
         try {
             return RuntimeExceptionDao.createDao(databaseHelper.getConnectionSource(), Beer.class);
