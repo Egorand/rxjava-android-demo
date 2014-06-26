@@ -26,9 +26,9 @@ public class BeerLoadingTask extends AsyncTask<Void, Void, Void> {
         try {
             List<Beer> beers = beersRestClient.getBeers("5").getBeer();
             beersDao.cacheBeer(beers);
-            EventBus.getDefault().post(new BeerLoadingResult(beers, null));
+            EventBus.getDefault().post(new BeerLoadingResult(beers));
         } catch (Exception e) {
-            EventBus.getDefault().post(new BeerLoadingResult(null, e));
+            EventBus.getDefault().post(new BeerLoadingResult(e));
         }
         return null;
     }
@@ -37,8 +37,13 @@ public class BeerLoadingTask extends AsyncTask<Void, Void, Void> {
         public final List<Beer> beers;
         public final Exception exception;
 
-        BeerLoadingResult(List<Beer> beers, Exception exception) {
+        BeerLoadingResult(List<Beer> beers) {
             this.beers = beers;
+            this.exception = null;
+        }
+
+        BeerLoadingResult(Exception exception) {
+            this.beers = null;
             this.exception = exception;
         }
     }
