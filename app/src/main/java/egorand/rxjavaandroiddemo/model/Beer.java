@@ -57,6 +57,10 @@ public class Beer {
         this.icon = icon;
     }
 
+    @Override public String toString() {
+        return name;
+    }
+
     private class Labels {
         private String icon;
     }

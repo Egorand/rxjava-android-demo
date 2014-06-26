@@ -3,24 +3,30 @@ package egorand.rxjavaandroiddemo.db;
 import android.content.AsyncTaskLoader;
 import android.content.Context;
 
+import com.j256.ormlite.dao.RuntimeExceptionDao;
+
 import java.util.List;
 
+import javax.inject.Inject;
+
+import dagger.Lazy;
 import egorand.rxjavaandroiddemo.model.Beer;
 
 public class BeersLoader extends AsyncTaskLoader<List<Beer>> {
 
-    private BeersDatabaseHelper databaseHelper;
+    private Lazy<RuntimeExceptionDao<Beer, String>> beersDao;
 
     private List<Beer> cachedResult;
 
-    public BeersLoader(Context context, BeersDatabaseHelper databaseHelper) {
+    @Inject
+    public BeersLoader(Context context, @BeersDao Lazy<RuntimeExceptionDao<Beer, String>> beersDao) {
         super(context);
-        this.databaseHelper = databaseHelper;
+        this.beersDao = beersDao;
     }
 
     @Override
     public List<Beer> loadInBackground() {
-        return databaseHelper.getBeersDao().queryForAll();
+        return beersDao.get().queryForAll();
     }
 
     @Override

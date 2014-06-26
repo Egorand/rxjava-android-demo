@@ -21,20 +21,24 @@ android {
     }
     packagingOptions {
         exclude 'LICENSE.txt'
+        exclude 'META-INF/services/javax.annotation.processing.Processor'
     }
 }
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
 
+    compile 'com.squareup.dagger:dagger:+'
+    compile 'com.squareup.dagger:dagger-compiler:+'
     compile 'com.squareup.retrofit:retrofit:+'
     compile 'com.jakewharton:butterknife:+'
     compile 'com.squareup.picasso:picasso:+'
     compile 'com.j256.ormlite:ormlite-core:+'
     compile 'com.j256.ormlite:ormlite-android:+'
-    compile 'de.greenrobot:eventbus:+'
     compile 'com.netflix.rxjava:rxjava-android:+'
+    compile 'com.github.johnkil.android-progressfragment:progressfragment-native:+'
 
-    androidTestCompile 'com.jakewharton.espresso:espresso:1.1-r3'
-    androidTestCompile 'com.squareup:fest-android:+'
+    androidTestCompile('com.jakewharton.espresso:espresso:1.1-r3') {
+        exclude group: 'com.squareup.dagger'
+    }
 }

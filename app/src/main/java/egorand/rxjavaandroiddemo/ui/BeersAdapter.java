@@ -1,6 +1,5 @@
 package egorand.rxjavaandroiddemo.ui;
 
-import android.content.Context;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +13,8 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import egorand.rxjavaandroiddemo.R;
@@ -26,9 +27,13 @@ public class BeersAdapter extends BaseAdapter {
 
     private List<Beer> beers;
 
-    public BeersAdapter(Context context, List<Beer> beers) {
-        this.layoutInflater = LayoutInflater.from(context);
-        this.picasso = Picasso.with(context);
+    @Inject
+    public BeersAdapter(LayoutInflater layoutInflater, Picasso picasso) {
+        this.layoutInflater = layoutInflater;
+        this.picasso = picasso;
+    }
+
+    public void setBeers(List<Beer> beers) {
         this.beers = new ArrayList<Beer>(beers);
     }
 

@@ -62,29 +62,28 @@
     <orderEntry type="jdk" jdkName="Android API 19 Platform" jdkType="Android SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" exported="" name="gson-2.2.4" level="project" />
-    <orderEntry type="library" exported="" scope="TEST" name="fest-util-1.2.5" level="project" />
-    <orderEntry type="library" exported="" name="eventbus-2.2.1" level="project" />
     <orderEntry type="library" exported="" scope="TEST" name="espresso-1.1-r3" level="project" />
-    <orderEntry type="library" exported="" scope="TEST" name="dagger-1.2.1" level="project" />
     <orderEntry type="library" exported="" scope="TEST" name="espresso-runner-1.1-r3" level="project" />
+    <orderEntry type="library" exported="" name="dagger-1.2.1" level="project" />
     <orderEntry type="library" exported="" name="rxjava-core-0.19.1" level="project" />
+    <orderEntry type="library" exported="" name="progressfragment-native-1.4.0" level="project" />
     <orderEntry type="library" exported="" scope="TEST" name="javax.annotation-api-1.2" level="project" />
     <orderEntry type="library" exported="" name="retrofit-1.6.0" level="project" />
-    <orderEntry type="library" exported="" name="butterknife-5.1.0" level="project" />
-    <orderEntry type="library" exported="" scope="TEST" name="javax.inject-1" level="project" />
     <orderEntry type="library" exported="" scope="TEST" name="hamcrest-library-1.1" level="project" />
+    <orderEntry type="library" exported="" name="javax.inject-1" level="project" />
+    <orderEntry type="library" exported="" name="butterknife-5.1.1" level="project" />
     <orderEntry type="library" exported="" name="picasso-2.3.2" level="project" />
     <orderEntry type="library" exported="" scope="TEST" name="guava-16.0" level="project" />
     <orderEntry type="library" exported="" name="rxjava-android-0.19.1" level="project" />
+    <orderEntry type="library" exported="" name="guava-15.0" level="project" />
     <orderEntry type="library" exported="" scope="TEST" name="hamcrest-integration-1.1" level="project" />
     <orderEntry type="library" exported="" name="ormlite-android-4.48" level="project" />
-    <orderEntry type="library" exported="" scope="TEST" name="support-v4-19.1.0" level="project" />
     <orderEntry type="library" exported="" name="ormlite-core-4.48" level="project" />
-    <orderEntry type="library" exported="" scope="TEST" name="fest-android-1.0.8" level="project" />
     <orderEntry type="library" exported="" scope="TEST" name="jsr305-1.3.9" level="project" />
+    <orderEntry type="library" exported="" name="javawriter-2.3.0" level="project" />
     <orderEntry type="library" exported="" scope="TEST" name="hamcrest-core-1.1" level="project" />
     <orderEntry type="library" exported="" scope="TEST" name="espresso-runner-runtime-1.1-r3" level="project" />
-    <orderEntry type="library" exported="" scope="TEST" name="fest-assert-core-2.0M10" level="project" />
+    <orderEntry type="library" exported="" name="dagger-compiler-1.2.1" level="project" />
   </component>
 </module>
 

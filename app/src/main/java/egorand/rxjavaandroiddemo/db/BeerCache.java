@@ -1,44 +1,32 @@
 package egorand.rxjavaandroiddemo.db;
 
+import com.j256.ormlite.dao.RuntimeExceptionDao;
+
 import java.util.List;
 import java.util.concurrent.Callable;
 
+import javax.inject.Inject;
+
+import dagger.Lazy;
 import egorand.rxjavaandroiddemo.model.Beer;
-import rx.Observable;
-import rx.Subscriber;
 
 public class BeerCache {
 
-    private BeersDatabaseHelper databaseHelper;
+    private final Lazy<RuntimeExceptionDao<Beer, String>> beersDao;
 
-    public BeerCache(BeersDatabaseHelper databaseHelper) {
-        this.databaseHelper = databaseHelper;
+    @Inject
+    public BeerCache(@BeersDao Lazy<RuntimeExceptionDao<Beer, String>> beersDao) {
+        this.beersDao = beersDao;
     }
 
-    public Observable<List<Beer>> cacheBeer(final List<Beer> beers) {
-        return Observable.create(new Observable.OnSubscribe<List<Beer>>() {
-            @Override public void call(Subscriber<? super List<Beer>> subscriber) {
-                databaseHelper.getBeersDao().callBatchTasks(new BatchBeerCachingTask(beers));
-                subscriber.onNext(beers);
-                subscriber.onCompleted();
+    public void cacheBeer(final List<Beer> beers) {
+        beersDao.get().callBatchTasks(new Callable<Void>() {
+            @Override public Void call() throws Exception {
+                for (Beer beer : beers) {
+                    beersDao.get().createOrUpdate(beer);
+                }
+                return null;
             }
         });
-    }
-
-    private class BatchBeerCachingTask implements Callable<Void> {
-
-        private List<Beer> beers;
-
-        private BatchBeerCachingTask(List<Beer> beers) {
-            this.beers = beers;
-        }
-
-        @Override
-        public Void call() throws Exception {
-            for (Beer beer : beers) {
-                databaseHelper.getBeersDao().createOrUpdate(beer);
-            }
-            return null;
-        }
     }
 }
