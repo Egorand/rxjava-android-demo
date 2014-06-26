@@ -35,7 +35,7 @@ dependencies {
     compile 'com.squareup.picasso:picasso:+'
     compile 'com.j256.ormlite:ormlite-core:+'
     compile 'com.j256.ormlite:ormlite-android:+'
-    compile 'com.netflix.rxjava:rxjava-android:+'
+    compile 'de.greenrobot:eventbus:+'
     compile 'com.github.johnkil.android-progressfragment:progressfragment-native:+'
 
     androidTestCompile('com.jakewharton.espresso:espresso:1.1-r3') {

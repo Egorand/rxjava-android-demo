@@ -1,5 +1,6 @@
 package egorand.rxjavaandroiddemo.di;
 
+import android.content.Context;
 import android.os.AsyncTask;
 import android.view.LayoutInflater;
 
@@ -15,8 +16,10 @@ import dagger.Module;
 import dagger.Provides;
 import egorand.rxjavaandroiddemo.MainActivity;
 import egorand.rxjavaandroiddemo.db.BeersDatabaseHelper;
+import egorand.rxjavaandroiddemo.db.BeersLoader;
 import egorand.rxjavaandroiddemo.model.Beer;
 import egorand.rxjavaandroiddemo.rest.BeersRestClient;
+import egorand.rxjavaandroiddemo.task.BeerLoadingTask;
 import egorand.rxjavaandroiddemo.ui.BeersAdapter;
 import egorand.rxjavaandroiddemo.ui.BeersFragment;
 import retrofit.RestAdapter;
@@ -25,7 +28,9 @@ import retrofit.android.MainThreadExecutor;
 @Module(
         injects = {
                 BeersFragment.class,
-                BeersAdapter.class
+                BeersAdapter.class,
+                BeerLoadingTask.class,
+                BeersLoader.class
         }
 )
 public class MainModule {
@@ -34,6 +39,11 @@ public class MainModule {
 
     public MainModule(MainActivity activity) {
         this.activity = activity;
+    }
+
+    @Provides
+    public Context provideContext() {
+        return activity;
     }
 
     @Provides
