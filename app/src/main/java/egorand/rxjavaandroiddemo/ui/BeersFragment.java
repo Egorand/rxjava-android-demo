@@ -2,6 +2,7 @@ package egorand.rxjavaandroiddemo.ui;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.devspark.progressfragment.ProgressListFragment;
 
@@ -51,11 +52,6 @@ public class BeersFragment extends ProgressListFragment {
 
     private Observable<List<Beer>> getBeer() {
         return restClient.getBeers("5")
-                .onErrorReturn(new Func1<Throwable, BeerContainer>() {
-                    @Override public BeerContainer call(Throwable throwable) {
-                        return new BeerContainer(beersDao.getCachedBeer());
-                    }
-                })
                 .flatMap(new Func1<BeerContainer, Observable<Beer>>() {
                     @Override public Observable<Beer> call(BeerContainer beerContainer) {
                         return Observable.from(beerContainer.getBeer());
@@ -72,7 +68,8 @@ public class BeersFragment extends ProgressListFragment {
                         beersDao.cacheBeer(beers);
                         return beers;
                     }
-                });
+                })
+                .onErrorResumeNext(Observable.just(beersDao.getCachedBeer()));
     }
 
     private void displayData(List<Beer> beers) {

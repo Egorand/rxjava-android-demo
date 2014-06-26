@@ -17,10 +17,6 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        StrictMode.ThreadPolicy strictPolicy = new StrictMode.ThreadPolicy.Builder()
-                .detectAll().penaltyDeath().build();
-        StrictMode.setThreadPolicy(strictPolicy);
-
         setContentView(R.layout.activity_main);
 
         objectGraph = ObjectGraph.create(new MainModule(this));
