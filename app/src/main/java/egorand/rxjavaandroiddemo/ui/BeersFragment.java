@@ -1,16 +1,24 @@
 package egorand.rxjavaandroiddemo.ui;
 
+import android.app.Fragment;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
-
-import com.devspark.progressfragment.ProgressListFragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import java.util.List;
 
 import javax.inject.Inject;
 
+import butterknife.ButterKnife;
+import butterknife.InjectView;
 import egorand.rxjavaandroiddemo.MainActivity;
+import egorand.rxjavaandroiddemo.R;
 import egorand.rxjavaandroiddemo.db.BeersDao;
 import egorand.rxjavaandroiddemo.model.Beer;
 import egorand.rxjavaandroiddemo.model.BeerContainer;
@@ -23,7 +31,11 @@ import rx.functions.Action1;
 import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
-public class BeersFragment extends ProgressListFragment {
+public class BeersFragment extends Fragment {
+
+    @InjectView(android.R.id.list) RecyclerView list;
+    @InjectView(android.R.id.empty) TextView empty;
+    @InjectView(android.R.id.progress) ProgressBar progress;
 
     @Inject BeersRestClient restClient;
     @Inject BeersDao beersDao;
@@ -31,11 +43,30 @@ public class BeersFragment extends ProgressListFragment {
     private Subscription subscription;
 
     @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.fragment_beer, container, false);
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        ButterKnife.inject(this, view);
+    }
+
+    @Override
+    public void onDestroyView() {
+        ButterKnife.reset(this);
+        super.onDestroyView();
+    }
+
+    @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         ((MainActivity) getActivity()).getObjectGraph().inject(this);
 
-        setEmptyText("No beer today, sorry");
+        list.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+        progress.setVisibility(View.VISIBLE);
         loadData();
     }
 
@@ -73,9 +104,13 @@ public class BeersFragment extends ProgressListFragment {
     }
 
     private void displayData(List<Beer> beers) {
+        progress.setVisibility(View.GONE);
         BeersAdapter adapter = ((MainActivity) getActivity()).getObjectGraph().get(BeersAdapter.class);
         adapter.setBeers(beers);
-        setListAdapter(adapter);
+        list.setAdapter(adapter);
+        if (beers.isEmpty()) {
+            empty.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override

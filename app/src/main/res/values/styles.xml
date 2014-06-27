@@ -1,9 +1,10 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="android:Theme.Holo.Light.DarkActionBar">
+    <style name="AppTheme" parent="android:Theme.Material.Light.DarkActionBar">
         <!-- Customize your theme here. -->
-        <item name="android:fontFamily">sans-serif-light</item>
+        <item name="android:colorPrimary">@android:color/holo_blue_dark</item>
+        <item name="android:statusBarColor">@android:color/holo_blue_dark</item>
     </style>
 
 </resources>

@@ -1,10 +1,10 @@
 package egorand.rxjavaandroiddemo.ui;
 
+import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -20,7 +20,7 @@ import butterknife.InjectView;
 import egorand.rxjavaandroiddemo.R;
 import egorand.rxjavaandroiddemo.model.Beer;
 
-public class BeersAdapter extends BaseAdapter {
+public class BeersAdapter extends RecyclerView.Adapter<BeersAdapter.BeerViewHolder> {
 
     private LayoutInflater layoutInflater;
     private Picasso picasso;
@@ -38,32 +38,14 @@ public class BeersAdapter extends BaseAdapter {
     }
 
     @Override
-    public int getCount() {
-        return beers.size();
+    public BeersAdapter.BeerViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
+        View view = layoutInflater.inflate(R.layout.row_beer, viewGroup, false);
+        return new BeerViewHolder(view);
     }
 
     @Override
-    public Beer getItem(int position) {
-        return beers.get(position);
-    }
-
-    @Override
-    public long getItemId(int position) {
-        return position;
-    }
-
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        View view = convertView;
-        BeerViewHolder viewHolder;
-        if (view == null) {
-            view = layoutInflater.inflate(R.layout.row_beer, parent, false);
-            viewHolder = new BeerViewHolder(view);
-            view.setTag(viewHolder);
-        } else {
-            viewHolder = (BeerViewHolder) view.getTag();
-        }
-        Beer beer = getItem(position);
+    public void onBindViewHolder(BeersAdapter.BeerViewHolder viewHolder, int i) {
+        Beer beer = beers.get(i);
         if (!TextUtils.isEmpty(beer.getIcon())) {
             picasso.load(beer.getIcon()).into(viewHolder.icon);
         }
@@ -72,16 +54,21 @@ public class BeersAdapter extends BaseAdapter {
             viewHolder.abv.setText(beer.getAbv() + "%");
         }
         viewHolder.description.setText(beer.getDescription());
-        return view;
     }
 
-    static class BeerViewHolder {
+    @Override
+    public int getItemCount() {
+        return beers.size();
+    }
+
+    static class BeerViewHolder extends RecyclerView.ViewHolder {
         @InjectView(R.id.icon) ImageView icon;
         @InjectView(R.id.title) TextView title;
         @InjectView(R.id.description) TextView description;
         @InjectView(R.id.abv) TextView abv;
 
         BeerViewHolder(View view) {
+            super(view);
             ButterKnife.inject(this, view);
         }
     }
